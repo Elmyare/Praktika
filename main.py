@@ -13,7 +13,7 @@ def get_amount() -> int:
     amount_in_last = len(BS(requests.get("https://coinmarketcap.com/?page="+str(last_page), headers=headers).text, "lxml").find("tbody").find_all("tr"))
     return (last_page-1)*100+amount_in_last
 
-def print_elements(elements: dict, page: int) -> None:
+def print_elements(elements: list, page: int) -> None:
     os.system("cls")
     print("  #   |         NAME         |    SYMBOL    |      PRICE      |    MARKET CAP   ")
     for i, c in enumerate(elements, start=1+(page-1)*20):
@@ -26,7 +26,7 @@ def get_elements() -> list:
     jsn = requests.get("https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing?start=1&limit=%d&sortBy=market_cap&sortType=desc&convert=USD,BTC,ETH&cryptoType=all&tagType=all&audited=false&aux=ath,atl,high24h,low24h,num_market_pairs,cmc_rank,date_added,max_supply,circulating_supply,total_supply,volume_7d,volume_30d,self_reported_circulating_supply,self_reported_market_cap" % (get_amount())).text
     data = json.loads(jsn)      
 
-    elements = [{"name":element["name"],
+    elements = [{"name":element["name"], # elements[0] = {"name":"bitcoin", "symbol":"BTC", pr, marketcap}
             "symbol":element["symbol"],
             "price":element["quotes"][2]["price"],
             "market_cap":element["quotes"][2]["marketCap"]} for element in data["data"]["cryptoCurrencyList"]]
